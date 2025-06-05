@@ -25,4 +25,9 @@ public class UserRegistrationRequest {
 
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
+
+    @Pattern(regexp = "^(ADMIN|READER)?$", message = "角色只能是ADMIN或READER")
+    private String role;
+
+    private String registerCode;
 } 

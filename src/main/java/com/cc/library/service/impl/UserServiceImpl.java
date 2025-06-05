@@ -1,6 +1,7 @@
 package com.cc.library.service.impl;
 
 import com.cc.library.entity.User;
+import com.cc.library.dto.UserDto;
 import com.cc.library.exception.BusinessException;
 import com.cc.library.repository.UserRepository;
 import com.cc.library.service.UserService;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @RequiredArgsConstructor
@@ -94,5 +97,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public UserDto getUserProfileDto(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException("USER_NOT_FOUND", "用户不存在"));
+        return UserDto.fromEntity(user);
+    }
+
+    @Override
+    public UserDto getCurrentUserProfileDto() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+             throw new BusinessException("UNAUTHENTICATED", "用户未认证");
+        }
+        String username = authentication.getName(); // Get username from principal
+        User user = getUserByUsername(username); // Fetch full user entity by username
+        return UserDto.fromEntity(user);
     }
 } 

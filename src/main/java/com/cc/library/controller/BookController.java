@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,16 +22,19 @@ public class BookController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Book> createBook(@RequestBody Book book) {
         return Result.success(bookService.createBook(book));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
         return Result.success(bookService.updateBook(id, book));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return Result.success();
@@ -71,12 +75,14 @@ public class BookController {
     }
 
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> updateBookStatus(@PathVariable Long id, @RequestParam Book.BookStatus status) {
         bookService.updateBookStatus(id, status);
         return Result.success();
     }
 
     @PutMapping("/{id}/stock")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> updateBookStock(@PathVariable Long id, @RequestParam int quantity) {
         bookService.updateBookStock(id, quantity);
         return Result.success();

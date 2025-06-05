@@ -33,6 +33,9 @@ public class BorrowRecord {
     @Column(nullable = false)
     private BorrowStatus status;
 
+    @Column(name = "remarks")
+    private String remarks;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

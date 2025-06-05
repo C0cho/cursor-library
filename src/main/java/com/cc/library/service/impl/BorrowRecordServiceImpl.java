@@ -25,7 +25,7 @@ public class BorrowRecordServiceImpl implements BorrowRecordService {
 
     @Override
     @Transactional
-    public BorrowRecord createBorrowRequest(Long userId, Long bookId, LocalDateTime dueDate) {
+    public BorrowRecord createBorrowRequest(Long userId, Long bookId, LocalDateTime dueDate, String remarks) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
         if (book.getAvailableCopies() <= 0) {
@@ -37,6 +37,7 @@ public class BorrowRecordServiceImpl implements BorrowRecordService {
         record.setBorrowDate(LocalDateTime.now());
         record.setDueDate(dueDate);
         record.setStatus(BorrowRecord.BorrowStatus.PENDING);
+        record.setRemarks(remarks);
         return borrowRecordRepository.save(record);
     }
 
@@ -115,5 +116,10 @@ public class BorrowRecordServiceImpl implements BorrowRecordService {
     @Override
     public List<BorrowRecord> getRecordsByStatus(BorrowRecord.BorrowStatus status) {
         return borrowRecordRepository.findByStatus(status);
+    }
+
+    @Override
+    public Page<BorrowRecord> getAllBorrowRecords(Pageable pageable) {
+        return borrowRecordRepository.findAll(pageable);
     }
 } 
